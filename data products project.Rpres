@@ -1,0 +1,58 @@
+Hospital Ranking Application
+========================================================
+author: jbratanov
+date:  07-01-2016
+
+What Hospital Information is Ranked
+========================================================
+Medical Conditions which affect older folks who require Medicare in the U.S.  
+- Heart Attack
+- Heart Failure
+- Pneumonia
+
+
+
+
+What Data is Used?
+========================================================
+Medicare's Hospital Compare information about the quality of care at over 4,000 Medicare-certified hospitalsis is used. It allow you to find hospitals and compare the quality of their care.
+
+The information in the Hospital Ranking Application: 
+- Helps you make decisions about where you get your health care
+- Encourages hospitals to improve the quality of care they provide 
+
+
+
+Application Options using Drop Downs
+========================================================
+Choose a State:
+ - 50 contiguous states
+
+Choose Medical Condition:
+  - "heart attack", "heart failure" or "pneumonia"
+      
+Choose a Ranking:
+  - "best 10", "worst 10" or "all"
+
+
+Example Application Output With embedded R Code
+========================================================
+Display Top 10 Arizona Hospitals for Heart Attacks
+```{r, echo=FALSE}
+    # initiative vars
+    state_df <- data.frame()
+    # Read outcome file
+    outcomeFile = read.csv("./outcome-of-care-measures.csv", colClasses="character", header= TRUE)
+    # Get state data
+    state_df <- subset(outcomeFile, subset=(State == "AZ"))
+    suppressWarnings(state_df[,11] <- as.numeric(state_df[,11]))
+    hospData <- state_df[order(state_df[,11], state_df$Hospital.Name),]
+    best <- na.omit(hospData)
+    for (i in 1:10)
+      {
+        cat(i,hospData$Hospital.Name[i])
+        if (i < 10)
+          cat('\n')
+      }
+ 
+```
