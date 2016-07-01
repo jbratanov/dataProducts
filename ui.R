@@ -1,5 +1,6 @@
 
 
+
 library(shiny)
 
 # Define UI for dataset viewer application
@@ -21,15 +22,12 @@ shinyUI(fluidPage(
                   choices = c("heart attack", "heart failure", "pneumonia")),
       
       selectInput("ranking", "Choose a Ranking:", 
-                  choices = c("best", "worst")),
-      
-      selectInput("dispCnt", "Display 1-10 Hospitals", 
-                  choices = c(1:10))
+                  choices = c("best 10", "worst 10", "all"))
       
     ),
     
     
-    # Show the caption and summary of hospitals
+    # Show the summary of hospitals
     mainPanel(
       
       verbatimTextOutput("summary")
