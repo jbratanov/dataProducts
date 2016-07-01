@@ -1,5 +1,6 @@
 
 
+
 library(shiny)
 
 
@@ -19,7 +20,7 @@ shinyServer(function(input, output) {
   })
   
   # Run hospital ranking file against parameters from ui.R
-  output$summary <- renderText({
+  output$summary <- renderPrint({
     # initiative vars
     state_df <- data.frame()
     # Read outcome file
@@ -28,42 +29,67 @@ shinyServer(function(input, output) {
     state_df <- subset(outcomeFile, subset=(State == input$state))
     if (nrow(state_df) == 0)
     {
-      stop("invalid USA State Name")
+      stop("Error: invalid USA State Name")
     }
-    # Get outcome data for state
+    # Get condition data for state
     if (input$condition == "heart attack")
     {
-      state_df[,11] <- as.numeric(state_df[,11])
+      suppressWarnings(state_df[,11] <- as.numeric(state_df[,11]))
       hospData <- state_df[order(state_df[,11], state_df$Hospital.Name),]
     }                          
     else if (input$condition == "heart failure")
     {
-      state_df[,17] <- as.numeric(state_df[,17])
+      suppressWarnings(state_df[,17] <- as.numeric(state_df[,17]))
       hospData <- state_df[order(state_df[,17], state_df$Hospital.Name),]
     }                        
     else if (input$condition == "pneumonia")
     {
-      state_df[,23] <- as.numeric(state_df[,23])
+      suppressWarnings(state_df[,23] <- as.numeric(state_df[,23]))
       hospData <- state_df[order(state_df[,23], state_df$Hospital.Name),]
     }
     else
     {
-      stop("Invalid Medical Condition")
+      stop("Error: Invalid Medical Condition")
     }
     # Omit NAs to count
     best <- na.omit(hospData)
+    #suppressWarnings
     # print rank answer
-    if (input$ranking == "best")
+    if (input$ranking == "best 10")
     {
-      hospData$Hospital.Name[1]
+      for (i in 1:10)
+      {
+        cat(i,hospData$Hospital.Name[i])
+        if (i < 10)
+          cat('\n')
+      }
     } 
-    else if (input$ranking == "worst")
+    else if (input$ranking == "worst 10")
     {
       worst <- nrow(hospData)
-      hospData$Hospital.Name[worst]
+      
+      for (i in 0:9)
+      {
+
+        cat(worst-i,hospData$Hospital.Name[worst-i])
+        if (i < 10)
+          cat('\n')
+      }
+    }
+    else if (input$ranking == "all")
+    {
+      worst <- nrow(hospData)
+      
+      for (i in 1:nrow(hospData))
+      {
+        
+        cat(i,hospData$Hospital.Name[i])
+        if (i < nrow(hospData))
+          cat('\n')
+      }
     }
     else
-      stop("Invalid Ranking Request")
+      stop("Error: Invalid Ranking Request")
 
  
 })
